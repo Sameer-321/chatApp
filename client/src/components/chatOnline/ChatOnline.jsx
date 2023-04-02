@@ -15,5 +15,5 @@ export default function ChatOnline() {
         <span className="chatOnlineName"> Sunar</span>
       </div>
     </div>
-  );
+  )
 }
