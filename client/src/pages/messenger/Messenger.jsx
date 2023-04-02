@@ -1,6 +1,8 @@
 import "./messenger.css";
 import Topbar from "../../components/topbar/Topbar";
 import Conversation from "../../components/conversations/Conversation";
+import Message from "../../components/message/Message";
+import ChatOnline from "../../components/chatOnline/ChatOnline";
 
 export function Messenger() {
   return (
@@ -19,10 +21,23 @@ export function Messenger() {
         </div>
 
         <div className="chatBox">
-          <div className="chatBoxWrapper">box</div>
+          <div className="chatBoxWrapper">
+            <div className="chatBoxTop">
+              <Message/>
+              <Message own={true}/>
+              <Message/>
+              </div>
+            <div className="chatBoxBottom">
+              <textarea className="chatMesageInput" placeholder="write message"></textarea>
+              <button className="chatSubmitButton">Send</button>
+            </div>
+
+          </div>
         </div>
         <div className="chatOnline">
-          <div className="onlineWrapper">online</div>
+          <div className="onlineWrapper">
+            <ChatOnline/>
+          </div>
         </div>
       </div>
     </>
