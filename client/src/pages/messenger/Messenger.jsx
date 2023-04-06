@@ -27,7 +27,6 @@ export function Messenger() {
 
   useEffect(() => {
     // console.log(messages)
-
     const getMessages = async () => {
       try {
         const res = await axios.get("/messages/" + currentChat?._id);
@@ -65,8 +64,8 @@ export function Messenger() {
               <>
                 <div className="chatBoxTop">
                   {messages.map((m) => (
-                    <Message messages={m} own={m.sender === user._id} />)
-                  )}
+                    <Message messages={m} own={m.sender === user._id} />
+                  ))}
                 </div>
                 <div className="chatBoxBottom">
                   <textarea
