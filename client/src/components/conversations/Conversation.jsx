@@ -5,7 +5,7 @@ import axios from "axios";
 export function Conversation(props) {
   const { conversation, currentUser } = props;
   const [user, setUser] = useState(null);
-  const PF =process.env.REACT_APP_PUBLIC_FOLDER
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
   useEffect(() => {
     console.log(currentUser);
@@ -14,7 +14,7 @@ export function Conversation(props) {
     const getUser = async () => {
       try {
         const res = await axios("/users?userId=" + friendId);
-        setUser(res.data)
+        setUser(res.data);
       } catch (err) {
         console.log(err);
       }
@@ -26,7 +26,11 @@ export function Conversation(props) {
     <div className="conversation">
       <img
         className="conversationImg"
-        src={user?.profilePicture ? user.profilePicture : PF+"person/noAvatar.png" }
+        src={
+          user?.profilePicture
+            ? PF + user.profilePicture
+            : PF + "person/noAvatar.png"
+        }
         alt="dubmbell"
       />
       <span className="conversationName">{user?.username}</span>

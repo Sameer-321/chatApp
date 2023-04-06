@@ -4,7 +4,7 @@ import { Conversation } from "../../components/conversations/Conversation";
 import Message from "../../components/message/Message";
 import ChatOnline from "../../components/chatOnline/ChatOnline";
 import { AuthContext } from "../../context/AuthContext";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 
 export function Messenger() {
@@ -13,7 +13,7 @@ export function Messenger() {
   const [messages, setMessages] = useState([]);
   const [newMessages, setNewMessages] = useState("");
   const { user } = useContext(AuthContext);
-
+  const scrollRef = useRef();
   useEffect(() => {
     const getConversation = async () => {
       try {
@@ -39,19 +39,23 @@ export function Messenger() {
     getMessages();
   }, [currentChat]);
 
-  const handleSubmit = async(e) => {
+  useEffect(()=>{
+    scrollRef.current?.scrollIntoView({behaviour:"smooth"})
+  },[messages])
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const message={
-      sender:user._id,
-      text:newMessages,
-      conversationId:currentChat._id,
-    }
-    try{
-      const res = await axios.post("/messages",message)
-      setMessages([...messages,res.data])
-      setNewMessages("")
-    }catch(err){
-      console.log(err)
+    const message = {
+      sender: user._id,
+      text: newMessages,
+      conversationId: currentChat._id,
+    };
+    try {
+      const res = await axios.post("/messages", message);
+      setMessages([...messages, res.data]);
+      setNewMessages("");
+    } catch (err) {
+      console.log(err);
     }
   };
   return (
@@ -80,7 +84,9 @@ export function Messenger() {
               <>
                 <div className="chatBoxTop">
                   {messages.map((m) => (
-                    <Message messages={m} own={m.sender === user._id} />
+                    <div ref={scrollRef}>
+                      <Message messages={m} own={m.sender === user._id} />
+                    </div>
                   ))}
                 </div>
                 <div className="chatBoxBottom">
