@@ -12,28 +12,37 @@ export function Messenger() {
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
-  const socket = useRef()
+  const socket = useRef();
   const [newMessages, setNewMessages] = useState("");
+  const [arrivalMessages, setArrivalMessages] = useState(null);
 
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
 
-  useEffect(()=>{
-    socket.current=io("ws://localhost:8900")
-  },[])
-
   useEffect(() => {
-   socket.current.emit("addUser",user._id)
-   socket.current.on("getUsers",users=>{
-    console.log(users)
-   })
-  }, [user]);
-
-  useEffect(() => {
-    socket?.on("welcome", (message) => {
-      console.log(message);
+    socket.current = io("ws://localhost:8900");
+    socket.current.on("getMessage", (data) => {
+      setArrivalMessages({
+        sender: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      });
     });
-  }, [socket]);
+  }, []);
+  useEffect(() => {
+    //private message
+    //kind of auth ********************************************************************
+    arrivalMessages &&
+      currentChat?.members.includes(arrivalMessages.sender) &&
+      setMessages((prev) => [...prev, arrivalMessages]);
+  }, [arrivalMessages, currentChat]);
+
+  useEffect(() => {
+    socket.current.emit("addUser", user._id);
+    socket.current.on("getUsers", (users) => {
+      console.log(users);
+    });
+  }, [user]);
 
   useEffect(() => {
     const getConversation = async () => {
@@ -71,6 +80,14 @@ export function Messenger() {
       text: newMessages,
       conversationId: currentChat._id,
     };
+    const receiverId = currentChat.members.find(
+      (member) => member !== user._id
+    );
+    socket.current.emit("sendMessage", {
+      senderId: user._id,
+      receiverId,
+      text: newMessages,
+    });
     try {
       const res = await axios.post("/messages", message);
       setMessages([...messages, res.data]);
